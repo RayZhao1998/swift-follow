@@ -6,6 +6,11 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		D798EA3C2CBD796200BA067C /* FollowAPI in Frameworks */ = {isa = PBXBuildFile; productRef = D798EA3B2CBD796200BA067C /* FollowAPI */; };
+		D798EA3F2CBD7CEF00BA067C /* FollowUI in Frameworks */ = {isa = PBXBuildFile; productRef = D798EA3E2CBD7CEF00BA067C /* FollowUI */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		D798EA1D2CBD6CDE00BA067C /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -27,6 +32,8 @@
 		D798EA0B2CBD6CDC00BA067C /* swift-follow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "swift-follow.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D798EA1C2CBD6CDE00BA067C /* swift-followTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-followTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D798EA262CBD6CDE00BA067C /* swift-followUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-followUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		D798EA392CBD730600BA067C /* FollowAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FollowAPI; sourceTree = "<group>"; };
+		D798EA3D2CBD7BB100BA067C /* FollowUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FollowUI; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -52,6 +59,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				D798EA3C2CBD796200BA067C /* FollowAPI in Frameworks */,
+				D798EA3F2CBD7CEF00BA067C /* FollowUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -75,9 +84,12 @@
 		D798EA022CBD6CDC00BA067C = {
 			isa = PBXGroup;
 			children = (
+				D798EA3D2CBD7BB100BA067C /* FollowUI */,
+				D798EA392CBD730600BA067C /* FollowAPI */,
 				D798EA0D2CBD6CDC00BA067C /* swift-follow */,
 				D798EA1F2CBD6CDE00BA067C /* swift-followTests */,
 				D798EA292CBD6CDE00BA067C /* swift-followUITests */,
+				D798EA3A2CBD796200BA067C /* Frameworks */,
 				D798EA0C2CBD6CDC00BA067C /* Products */,
 			);
 			sourceTree = "<group>";
@@ -90,6 +102,13 @@
 				D798EA262CBD6CDE00BA067C /* swift-followUITests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		D798EA3A2CBD796200BA067C /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -112,6 +131,8 @@
 			);
 			name = "swift-follow";
 			packageProductDependencies = (
+				D798EA3B2CBD796200BA067C /* FollowAPI */,
+				D798EA3E2CBD7CEF00BA067C /* FollowUI */,
 			);
 			productName = "swift-follow";
 			productReference = D798EA0B2CBD6CDC00BA067C /* swift-follow.app */;
@@ -591,6 +612,17 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		D798EA3B2CBD796200BA067C /* FollowAPI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FollowAPI;
+		};
+		D798EA3E2CBD7CEF00BA067C /* FollowUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = FollowUI;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = D798EA032CBD6CDC00BA067C /* Project object */;
 }
