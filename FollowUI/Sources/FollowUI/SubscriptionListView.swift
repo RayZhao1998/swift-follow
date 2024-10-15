@@ -10,7 +10,7 @@ import Kingfisher
 import SwiftUI
 
 public struct SubscriptionListView: View {
-    @State private var subscriptions: [Subscription] = []
+    @State private var subscriptions: [Subscriptions.Subscription] = []
 
     public init() {}
 
@@ -58,8 +58,7 @@ public struct SubscriptionListView: View {
             }
         }
         .onAppear {
-            let baseURL = URL(string: "https://api.follow.is")!
-            let service = SubscriptionService(baseURL: baseURL)
+            let service = SubscriptionService()
 
             Task {
                 do {
