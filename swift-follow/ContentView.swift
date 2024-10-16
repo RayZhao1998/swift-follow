@@ -10,7 +10,7 @@ import FollowUI
 
 struct ContentView: View {
     var body: some View {
-        SubscriptionListView()
+        EntryListView()
     }
 }
 

@@ -145,40 +145,36 @@ public enum Subscriptions {
 
 // MARK: - Network Request
 
-public enum StringOrArray {
-    case single(String)
-    case array([String])
+public enum SingleOrArray<T: Sendable>: Sendable {
+    case single(T)
+    case array([T])
 }
 
 // MARK: - Network Request
 
-public enum QueryParameter: Sendable {
-    case single(String)
-    case array([String])
-    
-    var urlQueryItem: [URLQueryItem] {
-        switch self {
-        case .single(let value):
-            return [URLQueryItem(name: "", value: value)]
-        case .array(let values):
-            return values.map { URLQueryItem(name: "", value: $0) }
-        }
-    }
-}
-
 public actor SubscriptionService {
     public init() {}
     
-    public func getSubscriptions(userId: QueryParameter? = nil, view: QueryParameter? = nil) async throws -> Subscriptions.Response {
+    public func getSubscriptions(userId: SingleOrArray<String>? = nil, view: SingleOrArray<String>? = nil) async throws -> Subscriptions.Response {
         var urlComponents = URLComponents(url: APIConfig.baseURL.appendingPathComponent("subscriptions"), resolvingAgainstBaseURL: true)
         urlComponents?.queryItems = []
         
         if let userId = userId {
-            urlComponents?.queryItems?.append(contentsOf: userId.urlQueryItem.map { URLQueryItem(name: "userId", value: $0.value) })
+            switch userId {
+            case .single(let t):
+                urlComponents?.queryItems?.append(URLQueryItem(name: "userId", value: t))
+            case .array(let array):
+                urlComponents?.queryItems?.append(contentsOf: array.map { URLQueryItem(name: "userId", value: $0)})
+            }
         }
         
         if let view = view {
-            urlComponents?.queryItems?.append(contentsOf: view.urlQueryItem.map { URLQueryItem(name: "view", value: $0.value) })
+            switch view {
+            case .single(let t):
+                urlComponents?.queryItems?.append(URLQueryItem(name: "view", value: t))
+            case .array(let array):
+                urlComponents?.queryItems?.append(contentsOf: array.map { URLQueryItem(name: "view", value: $0)})
+            }
         }
         
         guard let url = urlComponents?.url else {
