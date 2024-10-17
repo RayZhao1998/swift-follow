@@ -1,8 +1,8 @@
 //
-//  swift_followApp.swift
-//  swift-follow
+//  App.swift
+//  FollowUI
 //
-//  Created by ZiyuanZhao on 2024/10/14.
+//  Created by ZiyuanZhao on 2024/10/17.
 //
 
 import SwiftUI
@@ -11,7 +11,7 @@ import SwiftUI
 struct swift_followApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainView()
         }
     }
 }

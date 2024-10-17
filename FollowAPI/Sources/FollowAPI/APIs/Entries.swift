@@ -12,10 +12,14 @@ import Foundation
 
 public struct PostEntriesRequest: Encodable, Sendable {
     public let view: Int?
+    public let feedId: String?
+    public let listId: String?
     public let isArchived: Bool?
     public let csrfToken: String
 
-    public init(view: Int? = nil, isArchived: Bool? = nil) {
+    public init(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool? = nil) {
+        self.feedId = feedId
+        self.listId = listId
         self.view = view
         self.isArchived = isArchived
         self.csrfToken = APIConfig.csrfToken
@@ -222,9 +226,9 @@ public enum GetEntries {
 public actor EntriesService {
     public init() {}
 
-    public func postEntries(view: Int? = nil, isArchived: Bool? = nil) async throws -> PostEntries.Response {
+    public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool? = nil) async throws -> PostEntries.Response {
         let url = APIConfig.baseURL.appendingPathComponent("entries")
-        let parameters = PostEntriesRequest(view: view, isArchived: isArchived)
+        let parameters = PostEntriesRequest(feedId: feedId, listId: listId, view: view, isArchived: isArchived)
 
         return try await AF.request(url,
                                     method: .post,
