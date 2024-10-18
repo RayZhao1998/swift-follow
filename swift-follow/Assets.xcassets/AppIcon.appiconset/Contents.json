@@ -1,6 +1,7 @@
 {
   "images" : [
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -12,6 +13,7 @@
           "value" : "dark"
         }
       ],
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 2.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -23,6 +25,7 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 3.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -48,31 +51,37 @@
       "size" : "32x32"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 8.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "128x128"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 7.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "128x128"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 6.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "256x256"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "256x256"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 5.png",
       "idiom" : "mac",
       "scale" : "1x",
       "size" : "512x512"
     },
     {
+      "filename" : "344728860-c6c02ad5-cddc-46f5-8420-a47afe1c82fe 4.png",
       "idiom" : "mac",
       "scale" : "2x",
       "size" : "512x512"

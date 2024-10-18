@@ -11,7 +11,7 @@ import SwiftUI
 struct swift_followApp: App {
     var body: some Scene {
         WindowGroup {
-            MainView()
+            LandingView()
         }
     }
 }

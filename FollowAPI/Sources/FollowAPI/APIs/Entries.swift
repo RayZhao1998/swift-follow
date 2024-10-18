@@ -22,7 +22,7 @@ public struct PostEntriesRequest: Encodable, Sendable {
         self.listId = listId
         self.view = view
         self.isArchived = isArchived
-        self.csrfToken = APIConfig.csrfToken
+        self.csrfToken = NetworkManager.shared.csrfToken ?? ""
     }
 }
 
@@ -227,26 +227,28 @@ public actor EntriesService {
     public init() {}
 
     public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool? = nil) async throws -> PostEntries.Response {
-        let url = APIConfig.baseURL.appendingPathComponent("entries")
-        let parameters = PostEntriesRequest(feedId: feedId, listId: listId, view: view, isArchived: isArchived)
+        let url = NetworkManager.baseURL.appendingPathComponent("entries")
+        
+        var parameters: [String: Sendable] = [:]
+        parameters["csrf_token"] = NetworkManager.shared.csrfToken ?? ""
+        if let feedId = feedId { parameters["feed_id"] = feedId }
+        if let listId = listId { parameters["list_id"] = listId }
+        if let view = view { parameters["view"] = view }
+        if let isArchived = isArchived { parameters["is_archived"] = isArchived }
 
-        return try await AF.request(url,
-                                    method: .post,
-                                    parameters: parameters,
-                                    encoder: JSONParameterEncoder.default,
-                                    headers: HTTPHeaders(APIConfig.headers))
-            .validate()
-            .serializingDecodable(PostEntries.Response.self)
-            .value
+        return try await NetworkManager.shared.request(url,
+                                                       method: .post,
+                                                       parameters: parameters,
+                                                       encoding: JSONEncoding.default)
     }
 
     public func getEntry(id: String) async throws -> GetEntries.EntriesResponse {
-        let url = APIConfig.baseURL.appendingPathComponent("entries")
+        let url = NetworkManager.baseURL.appendingPathComponent("entries")
+        let parameters: [String: Sendable] = ["id": id]
 
-        return try await AF.request(url, method: .get, parameters: ["id": id], encoder: URLEncodedFormParameterEncoder.default, headers: HTTPHeaders(APIConfig.headers))
-            .validate()
-            .serializingDecodable(GetEntries.EntriesResponse.self)
-            .value
+        return try await NetworkManager.shared.request(url,
+                                                       method: .get,
+                                                       parameters: parameters)
     }
 }
 

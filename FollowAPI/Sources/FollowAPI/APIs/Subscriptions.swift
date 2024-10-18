@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Alamofire
 
 // MARK: - Response Structures
 
@@ -156,7 +155,7 @@ public actor SubscriptionService {
     public init() {}
     
     public func getSubscriptions(userId: SingleOrArray<String>? = nil, view: SingleOrArray<String>? = nil) async throws -> Subscriptions.Response {
-        var urlComponents = URLComponents(url: APIConfig.baseURL.appendingPathComponent("subscriptions"), resolvingAgainstBaseURL: true)
+        var urlComponents = URLComponents(url: NetworkManager.baseURL.appendingPathComponent("subscriptions"), resolvingAgainstBaseURL: true)
         urlComponents?.queryItems = []
         
         if let userId = userId {
@@ -181,10 +180,7 @@ public actor SubscriptionService {
             throw URLError(.badURL)
         }
         
-        return try await AF.request(url, headers: HTTPHeaders(APIConfig.headers))
-            .validate()
-            .serializingDecodable(Subscriptions.Response.self)
-            .value
+        return try await NetworkManager.shared.request(url)
     }
 }
 
