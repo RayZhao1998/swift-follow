@@ -101,9 +101,9 @@ public enum PostEntries {
     public struct Attachment: Decodable, Sendable {
         public let url: String
         public let title: String?
-        public let duration_in_seconds: Int?
+        public let duration_in_seconds: String?
         public let mime_type: String?
-        public let size_in_bytes: Int?
+        public let size_in_bytes: String?
     }
 
     public struct Extra: Decodable, Sendable {
@@ -181,9 +181,9 @@ public enum GetEntries {
     public struct Attachment: Decodable, Sendable {
         public let url: String
         public let title: String?
-        public let duration_in_seconds: Int?
+        public let duration_in_seconds: String?
         public let mime_type: String?
-        public let size_in_bytes: Int?
+        public let size_in_bytes: String?
     }
 
     public struct Extra: Decodable, Sendable {
@@ -230,11 +230,11 @@ public actor EntriesService {
         let url = NetworkManager.baseURL.appendingPathComponent("entries")
         
         var parameters: [String: Sendable] = [:]
-        parameters["csrf_token"] = NetworkManager.shared.csrfToken ?? ""
-        if let feedId = feedId { parameters["feed_id"] = feedId }
-        if let listId = listId { parameters["list_id"] = listId }
+        parameters["csrfToken"] = NetworkManager.shared.csrfToken ?? ""
+        if let feedId = feedId { parameters["feedId"] = feedId }
+        if let listId = listId { parameters["listId"] = listId }
         if let view = view { parameters["view"] = view }
-        if let isArchived = isArchived { parameters["is_archived"] = isArchived }
+        if let isArchived = isArchived { parameters["isArchived"] = isArchived }
 
         return try await NetworkManager.shared.request(url,
                                                        method: .post,
