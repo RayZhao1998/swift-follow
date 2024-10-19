@@ -5,7 +5,6 @@
 //  Created by ZiyuanZhao on 2024/10/19.
 //
 
-import Alamofire
 import Foundation
 
 public enum Auth {

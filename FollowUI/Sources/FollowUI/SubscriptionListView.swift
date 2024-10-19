@@ -28,11 +28,15 @@ let views: [ViewDefination] = [
 public struct SubscriptionListView: View {
     @State private var subscriptions: [Subscriptions.Subscription] = []
 
+    @State private var reads: [String: Int] = [:]
+
     @State private var selectedView: ViewDefination = views.first!
 
     @State private var isLoading: Bool = true
 
-    let service = SubscriptionService()
+    let subscriptionService = SubscriptionService()
+
+    let readsService = ReadsService()
 
     public init() {}
 
@@ -116,6 +120,12 @@ public struct SubscriptionListView: View {
                                             }
                                             Text(subscription.lists.title ?? "")
                                                 .lineLimit(1)
+                                            Spacer()
+                                            if let count = reads[subscription.listId] {
+                                                Text("\(count)")
+                                                    .font(.system(size: 10))
+                                                    .foregroundStyle(.secondary)
+                                            }
                                         }
                                     }
                                 }
@@ -135,6 +145,12 @@ public struct SubscriptionListView: View {
                                         }
                                         Text(subscription.title ?? "")
                                             .lineLimit(1)
+                                        Spacer()
+                                        if let count = reads[subscription.inboxId] {
+                                            Text("\(count)")
+                                                .font(.system(size: 10))
+                                                .foregroundStyle(.secondary)
+                                        }
                                     }
                                 }
                             }
@@ -156,6 +172,12 @@ public struct SubscriptionListView: View {
                                             }
                                             Text(subscription.feeds.title ?? "")
                                                 .lineLimit(1)
+                                            Spacer()
+                                            if let count = reads[subscription.feedId] {
+                                                Text("\(count)")
+                                                    .font(.system(size: 10))
+                                                    .foregroundStyle(.secondary)
+                                            }
                                         }
                                     }
                                 }
@@ -179,8 +201,9 @@ public struct SubscriptionListView: View {
         } completion: {
             Task {
                 do {
-                    let result = try await service.getSubscriptions(view: .single(selectedView.view)).data
+                    let result = try await subscriptionService.getSubscriptions(view: .single(selectedView.view)).data
                     self.subscriptions = result
+                    self.reads = try await readsService.getReads(view: .single(selectedView.view)).data
                     withAnimation {
                         self.isLoading = false
                     }
