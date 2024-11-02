@@ -48,8 +48,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
             Task {
                 do {
                     NetworkManager.shared.setSessionToken(token)
+                    self.setSessionToken(token)
                     let session = try await authService.getSession(authToken: token)
-                    NetworkManager.shared.setSessionToken(session.sessionToken)
                     let csrfToken = try await authService.getCsrfToken().csrfToken
                     NetworkManager.shared.setCSRToken(csrfToken)
                     await MainActor.run {
@@ -61,6 +61,19 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
                     // 可以在这里添加错误处理逻辑
                 }
             }
+        }
+    }
+    
+    private func setSessionToken(_ token: String) {
+        do {
+            let data = try JSONEncoder().encode(token)
+            if KeychainWrapper.save(data, forKey: "sessionToken") {
+                print("Session token saved successfully")
+            } else {
+                print("Failed to save session token")
+            }
+        } catch {
+            print("Error encoding session data: \(error)")
         }
     }
 
@@ -79,10 +92,10 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     }
 
     private func loadSessionData() async {
-        if let data = KeychainWrapper.load(forKey: "sessionData") {
+        if let sessionTokenData = KeychainWrapper.load(forKey: "sessionToken") {
             do {
-                let session: Auth.SessionResponse = try JSONDecoder().decode(Auth.SessionResponse.self, from: data)
-                NetworkManager.shared.setSessionToken(session.sessionToken)
+                let sessionToken: String = try JSONDecoder().decode(String.self, from: sessionTokenData)
+                NetworkManager.shared.setSessionToken(sessionToken)
                 let csrfToken = try await authService.getCsrfToken().csrfToken
                 NetworkManager.shared.setCSRToken(csrfToken)
                 isAuthenticated = true
@@ -97,6 +110,7 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     func logout() {
         isAuthenticated = false
         KeychainWrapper.delete(forKey: "sessionData")
+        KeychainWrapper.delete(forKey: "sessionToken")
         NetworkManager.shared.clearTokens()
     }
 }

@@ -9,7 +9,6 @@ import Foundation
 
 public enum Auth {
     public struct SessionResponse: Codable, Sendable {
-        public let sessionToken: String
         public let userId: String
         public let expires: String
         public let user: User
