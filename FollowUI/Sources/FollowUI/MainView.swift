@@ -5,6 +5,8 @@
 //  Created by ZiyuanZhao on 2024/10/17.
 //
 
+import FollowAPI
+import Kingfisher
 import SwiftUI
 
 struct MainView: View {
@@ -15,6 +17,9 @@ struct MainView: View {
             }
             Tab("Subscriptions", systemImage: "mail.stack") {
                 SubscriptionListView()
+            }
+            Tab("Profile", systemImage: "person.fill") {
+                ProfileView()
             }
         }
     }

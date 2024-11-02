@@ -75,6 +75,7 @@ public struct EntryListView: View {
             }
             .navigationTitle("Articles")
         }
+        .toolbarVisibility(feedId == nil && listId == nil ? .visible : .hidden, for: .tabBar)
         .onAppear {
             let service = EntriesService()
 

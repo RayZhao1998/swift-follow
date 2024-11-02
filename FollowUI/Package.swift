@@ -18,7 +18,8 @@ let package = Package(
         .package(url: "https://github.com/malcommac/SwiftDate", exact: "7.0.0"),
         .package(url: "https://github.com/scinfu/SwiftSoup", exact: "2.7.5"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.1"),
-        .package(url: "https://github.com/LiveUI/Awesome", exact: "2.4.0")
+        .package(url: "https://github.com/LiveUI/Awesome", exact: "2.4.0"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -31,7 +32,8 @@ let package = Package(
                 .product(name: "SwiftDate", package: "SwiftDate"),
                 .product(name: "SwiftSoup", package: "SwiftSoup"),
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
-                .product(name: "Awesome", package: "Awesome")
+                .product(name: "Awesome", package: "Awesome"),
+                .product(name: "BigInt", package: "BigInt")
             ]),
         .testTarget(
             name: "FollowUITests",

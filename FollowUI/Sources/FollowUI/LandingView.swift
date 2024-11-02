@@ -11,8 +11,20 @@ import FollowAPI
 import Kingfisher
 import SwiftUI
 
+struct SessionDataKey: EnvironmentKey {
+    static let defaultValue: Auth.SessionResponse? = nil
+}
+
+extension EnvironmentValues {
+    var sessionData: Auth.SessionResponse?  {
+        get { self[SessionDataKey.self] }
+        set { self[SessionDataKey.self] = newValue }
+    }
+}
+
 class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     @Published var isAuthenticated: Bool? = false
+    @Published var sessionData: Auth.SessionResponse?
 
     private var webAuthSession: ASWebAuthenticationSession?
     private let authService = AuthService()
@@ -82,6 +94,7 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
     private func saveSessionData(sessionData: Auth.SessionResponse?) {
         guard let sessionData = sessionData else { return }
+        self.sessionData = sessionData
         do {
             let data = try JSONEncoder().encode(sessionData)
             if KeychainWrapper.save(data, forKey: "sessionData") {
@@ -95,6 +108,11 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     }
 
     private func loadSessionData() async {
+        if let sessionData = KeychainWrapper.load(forKey: "sessionData") {
+            self.sessionData = try? JSONDecoder().decode(
+                Auth.SessionResponse.self, from: sessionData
+            )
+        }
         if let sessionTokenData = KeychainWrapper.load(forKey: "sessionToken") {
             do {
                 let sessionToken: String = try JSONDecoder().decode(
@@ -114,8 +132,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
     func logout() {
         isAuthenticated = false
-        let _ = KeychainWrapper.delete(forKey: "sessionData")
-        let _ = KeychainWrapper.delete(forKey: "sessionToken")
+        _ = KeychainWrapper.delete(forKey: "sessionData")
+        _ = KeychainWrapper.delete(forKey: "sessionToken")
         NetworkManager.shared.clearTokens()
     }
 }
@@ -154,14 +172,16 @@ struct LandingView: View {
         Group {
             if showMainView {
                 MainView()
+                    .environment(\.sessionData, authHandler.sessionData)
+                    .environmentObject(authHandler)
             } else {
                 contentView
             }
         }
         .onChange(of: authHandler.isAuthenticated) { newValue in
-            if newValue == true {
+            if let newValue {
                 DispatchQueue.main.async {
-                    self.showMainView = true
+                    self.showMainView = newValue
                 }
             }
         }
