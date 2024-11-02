@@ -6,6 +6,7 @@
 //
 
 import AuthenticationServices
+import Awesome
 import FollowAPI
 import Kingfisher
 import SwiftUI
@@ -26,7 +27,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     func startAuthentication() {
         guard let url = URL(string: "https://app.follow.is/login?provider=github") else { return }
 
-        webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: "follow") { callbackURL, error in
+        webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: "follow") {
+            callbackURL, error in
             guard error == nil, let successURL = callbackURL else {
                 print("Authentication failed: \(error?.localizedDescription ?? "Unknown error")")
                 return
@@ -42,7 +44,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
     private func handleCallback(url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false),
-              let queryItems = components.queryItems else { return }
+              let queryItems = components.queryItems
+        else { return }
 
         if let token = queryItems.first(where: { $0.name == "token" })?.value {
             Task {
@@ -63,7 +66,7 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
             }
         }
     }
-    
+
     private func setSessionToken(_ token: String) {
         do {
             let data = try JSONEncoder().encode(token)
@@ -94,7 +97,9 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     private func loadSessionData() async {
         if let sessionTokenData = KeychainWrapper.load(forKey: "sessionToken") {
             do {
-                let sessionToken: String = try JSONDecoder().decode(String.self, from: sessionTokenData)
+                let sessionToken: String = try JSONDecoder().decode(
+                    String.self, from: sessionTokenData
+                )
                 NetworkManager.shared.setSessionToken(sessionToken)
                 let csrfToken = try await authService.getCsrfToken().csrfToken
                 NetworkManager.shared.setCSRToken(csrfToken)
@@ -109,8 +114,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
     func logout() {
         isAuthenticated = false
-        KeychainWrapper.delete(forKey: "sessionData")
-        KeychainWrapper.delete(forKey: "sessionToken")
+        let _ = KeychainWrapper.delete(forKey: "sessionData")
+        let _ = KeychainWrapper.delete(forKey: "sessionToken")
         NetworkManager.shared.clearTokens()
     }
 }
@@ -121,9 +126,29 @@ extension AuthenticationHandler: ASWebAuthenticationPresentationContextProviding
     }
 }
 
+extension Color {
+    static let redGradientStart = Color(
+        light: .init(red: 252 / 255, green: 165 / 255, blue: 165 / 255), // red-300
+        dark: .init(red: 239 / 255, green: 68 / 255, blue: 68 / 255)
+    ) // red-500
+    static let orangeGradientEnd = Color(
+        light: .init(red: 253 / 255, green: 186 / 255, blue: 116 / 255), // orange-300
+        dark: .init(red: 249 / 255, green: 115 / 255, blue: 22 / 255)
+    ) // orange-500
+}
+
 struct LandingView: View {
     @StateObject private var authHandler = AuthenticationHandler()
     @State private var showMainView = false
+    @State private var logoOffset: CGFloat = 50
+    @State private var logoOpacity: CGFloat = 0
+    @State private var titleOffset: CGFloat = 50
+    @State private var titleOpacity: CGFloat = 0
+    @State private var subtitleOffset: CGFloat = 50
+    @State private var subtitleOpacity: CGFloat = 0
+    @State private var buttonsOffset: CGFloat = 50
+    @State private var buttonsOpacity: CGFloat = 0
+    @State private var animateGradient: Bool = false
 
     var body: some View {
         Group {
@@ -146,27 +171,109 @@ struct LandingView: View {
     private var contentView: some View {
         if let isAuthenticated = authHandler.isAuthenticated {
             VStack {
-                KFImage.url(URL(string: "https://github.com/RSSNext/follow/assets/41265413/c6c02ad5-cddc-46f5-8420-a47afe1c82fe")!)
-                    .resizable()
-                    .frame(width: 80, height: 80)
+                Spacer()
+                HStack {
+                    Image("FollowIcon")
+                        .resizable()
+                        .frame(width: 40, height: 40)
+                    Text("Follow")
+                        .font(.custom("SNProVF-Bold", size: 28))
+                }
+                .offset(y: logoOffset)
+                Spacer()
+                    .frame(height: 20)
+                HStack(spacing: 0) {
+                    Text("Next-Gen")
+                        .background(
+                            LinearGradient(
+                                colors: [
+                                    .redGradientStart,
+                                    .orangeGradientEnd,
+                                ],
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .cornerRadius(8)
+                            .scaleEffect(x: animateGradient ? 1 : 0, y: 1, anchor: .leading)
+                            .animation(.snappy(duration: 0.25).delay(0.6), value: animateGradient)
+                        )
+                        .onAppear {
+                            animateGradient = true
+                        }
+                    Text(" Information Browser")
+                }
+                .font(.custom("SNProVF-Bold", size: 20))
+                .offset(y: titleOffset)
+                .opacity(titleOpacity)
 
+                Spacer()
                 if isAuthenticated {
                     Text("Redirecting...")
+                        .offset(y: buttonsOffset)
+                        .opacity(buttonsOpacity)
                 } else {
-                    Button(action: {
-                        Task {
-                            await authHandler.startAuthentication()
-                        }
-                    }) {
-                        Text("Continue with Github")
+                    VStack(spacing: 10) {
+                        Button(action: {
+                            authHandler.startAuthentication()
+                        }) {
+                            HStack {
+                                Spacer()
+                                Awesome.Brand.github.image
+                                    .foregroundColor(.white)
+                                Text("Continue with Github")
+                                    .bold()
+                                Spacer()
+                            }
                             .padding()
-                            .background(Color.blue)
+                            .background(Color.black)
                             .foregroundColor(.white)
                             .cornerRadius(8)
+                        }
+                        Button(action: {
+                            Task {
+                                // TODO: Sign in with Google
+                            }
+                        }) {
+                            HStack {
+                                Spacer()
+                                Awesome.Brand.google.image
+                                    .foregroundColor(.white)
+                                Text("Continue with Google")
+                                    .bold()
+                                Spacer()
+                            }
+                            .padding()
+                            .background(Color(red: 59 / 255, green: 130 / 255, blue: 246 / 255))
+                            .foregroundColor(.white)
+                            .cornerRadius(8)
+                        }
                     }
+                    .offset(y: buttonsOffset)
+                    .opacity(buttonsOpacity)
                 }
             }
             .padding()
+            .onAppear {
+                withAnimation(.snappy(duration: 0.5).delay(0.0)) {
+                    logoOffset = 0
+                    logoOpacity = 1
+                }
+
+                withAnimation(.snappy(duration: 0.5).delay(0.2)) {
+                    titleOffset = 0
+                    titleOpacity = 1
+                }
+
+                withAnimation(.snappy(duration: 0.5).delay(0.4)) {
+                    subtitleOffset = 0
+                    subtitleOpacity = 1
+                }
+
+                withAnimation(.snappy(duration: 0.5).delay(0.6)) {
+                    buttonsOffset = 0
+                    buttonsOpacity = 1
+                }
+            }
         } else {
             ProgressView()
         }

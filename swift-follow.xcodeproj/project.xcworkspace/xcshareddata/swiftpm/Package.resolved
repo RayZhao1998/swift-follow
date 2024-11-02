@@ -1,5 +1,5 @@
 {
-  "originHash" : "b130d4edf7fb0176bca2e8d70398a8a0bcc25144496846e752fcd367aac40855",
+  "originHash" : "91140ebe1826dcfd8d8bc983d1fc54bb4fbd2cb0461c95fbae7f24ec80106613",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "ea6a94b7dddffd0ca4d0f29252d95310b84dec84",
         "version" : "5.10.0"
+      }
+    },
+    {
+      "identity" : "awesome",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/LiveUI/Awesome",
+      "state" : {
+        "revision" : "40c68d0ca2b143c1118e636518706a4b8332777b",
+        "version" : "2.4.0"
       }
     },
     {
