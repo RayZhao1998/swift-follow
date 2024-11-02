@@ -23,11 +23,22 @@ public enum Subscriptions {
         public var id: String {
             switch self {
             case .feed(let feedSubscription):
-                return "feed_\(feedSubscription.feedId)"
+                return "\(feedSubscription.feedId)"
             case .list(let listSubscription):
-                return "list_\(listSubscription.listId)"
+                return "\(listSubscription.listId)"
             case .inbox(let inboxSubscription):
-                return "inbox_\(inboxSubscription.inboxId)"
+                return "\(inboxSubscription.inboxId)"
+            }
+        }
+        
+        public var view: Int {
+            switch self {
+            case .feed(let feedSubscription):
+                return feedSubscription.view
+            case .list(let listSubscription):
+                return listSubscription.view
+            case .inbox(let inboxSubscription):
+                return inboxSubscription.view
             }
         }
         
