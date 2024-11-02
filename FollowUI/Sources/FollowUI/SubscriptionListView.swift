@@ -94,7 +94,7 @@ public struct SubscriptionListView: View {
             VStack {
                 HStack(alignment: .bottom, spacing: 12) {
                     Text(selectedView.name)
-                        .font(.title2)
+                        .font(.custom("SNProVF-Bold", size: 20))
                         .bold()
                         .lineLimit(1)
                     Spacer()
@@ -105,7 +105,7 @@ public struct SubscriptionListView: View {
                                 .renderingMode(.template)
                                 .frame(width: 20, height: 20)
                             Text("\(unreadCount(item.view) > 99 ? "99+" : "\(unreadCount(item.view))")")
-                                .font(.system(size: 10))
+                                .font(.custom("SNProVF-Regular", size: 10))
                         }
                         .foregroundStyle(item == selectedView ? item.selectedColor : .secondary)
                         .onTapGesture {
@@ -122,7 +122,7 @@ public struct SubscriptionListView: View {
                         ProgressView()
                         Spacer()
                     }
-                } else if subscriptions.isEmpty {
+                } else if (subscriptions[selectedView.view] ?? []).isEmpty {
                     VStack {
                         Spacer()
                         Group {
@@ -142,7 +142,7 @@ public struct SubscriptionListView: View {
                             Section("Lists") {
                                 ForEach(listSubscriptions, id: \.listId) { subscription in
                                     NavigationLink {
-                                        EntryListView(listId: subscription.listId)
+                                        EntryListView(lists: subscription.lists)
                                     } label: {
                                         HStack {
                                             if let image = subscription.lists.image,
@@ -162,7 +162,7 @@ public struct SubscriptionListView: View {
                                             Spacer()
                                             if let count = reads[subscription.listId] {
                                                 Text("\(count)")
-                                                    .font(.system(size: 10))
+                                                    .font(.custom("SNProVF-Regular", size: 10))
                                                     .foregroundStyle(.secondary)
                                             }
                                         }
@@ -191,7 +191,7 @@ public struct SubscriptionListView: View {
                                         Spacer()
                                         if let count = reads[subscription.inboxId] {
                                             Text("\(count)")
-                                                .font(.system(size: 10))
+                                                .font(.custom("SNProVF-Regular", size: 10))
                                                 .foregroundStyle(.secondary)
                                         }
                                     }
@@ -202,7 +202,7 @@ public struct SubscriptionListView: View {
                             Section("Feeds") {
                                 ForEach(feedSubscriptions, id: \.feedId) { subscription in
                                     NavigationLink {
-                                        EntryListView(feedId: subscription.feedId)
+                                        EntryListView(feeds: subscription.feeds)
                                     } label: {
                                         HStack {
                                             if let image = subscription.feeds.image,
@@ -222,7 +222,7 @@ public struct SubscriptionListView: View {
                                             Spacer()
                                             if let count = reads[subscription.feedId] {
                                                 Text("\(count)")
-                                                    .font(.system(size: 10))
+                                                    .font(.custom("SNProVF-Regular", size: 10))
                                                     .foregroundStyle(.secondary)
                                             }
                                         }
@@ -234,7 +234,14 @@ public struct SubscriptionListView: View {
                 }
             }
         }
+        .font(.custom("SNProVF-Regular", size: 16))
         .onAppear {
+            for family: String in UIFont.familyNames {
+                print(family)
+                for names: String in UIFont.fontNames(forFamilyName: family) {
+                    print("== \(names)")
+                }
+            }
             fetchSubscriptions(firstTime: true)
         }
         .onChange(of: selectedView) { _, _ in
