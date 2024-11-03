@@ -231,53 +231,62 @@ public struct SubscriptionListView: View {
                             }
                         }
                     }
+                    .refreshable {
+                        await fetchSubscriptions()
+                    }
                 }
             }
         }
         .font(.custom("SNProVF-Regular", size: 16))
         .onAppear {
-            for family: String in UIFont.familyNames {
-                print(family)
-                for names: String in UIFont.fontNames(forFamilyName: family) {
-                    print("== \(names)")
+            withAnimation {
+                self.isLoading = true
+            } completion: {
+                Task {
+                    await fetchSubscriptions(firstTime: true)
+                    withAnimation {
+                        self.isLoading = false
+                    }
                 }
             }
-            fetchSubscriptions(firstTime: true)
         }
         .onChange(of: selectedView) { _, _ in
-            fetchSubscriptions()
+            withAnimation {
+                self.isLoading = true
+            } completion: {
+                Task {
+                    await fetchSubscriptions()
+                    withAnimation {
+                        self.isLoading = false
+                    }
+                }
+            }
         }
     }
 
-    private func fetchSubscriptions(firstTime: Bool = false) {
-        withAnimation {
-            self.isLoading = true
-        } completion: {
-            Task {
-                do {
-                    let result = try await subscriptionService.getSubscriptions(
-                        view: firstTime ? nil : .single("\(selectedView.view)")
-                    ).data
-                    if firstTime {
-                        self.subscriptions = [:]
-                        result.forEach { subscription in
-                            self.subscriptions[subscription.view, default: []].append(subscription)
-                        }
-                    } else {
-                        self.subscriptions[selectedView.view] = result
-                    }
-                    self.reads = try await readsService.getReads()
-                        .data
-                    withAnimation {
-                        self.isLoading = false
-                    }
-                } catch {
-                    withAnimation {
-                        self.isLoading = false
-                    }
-                    print("Error: \(error)")
+    private func fetchSubscriptions(firstTime: Bool = false) async {
+        do {
+            let result = try await subscriptionService.getSubscriptions(
+                view: firstTime ? nil : .single("\(selectedView.view)")
+            ).data
+            if firstTime {
+                subscriptions = [:]
+                for subscription in result {
+                    subscriptions[subscription.view, default: []].append(subscription)
                 }
+            } else {
+                subscriptions[selectedView.view] = result
             }
+            reads = try await readsService.getReads()
+                .data
+            withAnimation {
+                self.isLoading = false
+            }
+        } catch {
+            withAnimation {
+                self.isLoading = false
+            }
+            print("Error: \(error)")
         }
     }
 }
