@@ -15,7 +15,10 @@ public struct EntryListView: View {
 
     @State private var entries: [PostEntries.EntryData] = []
 
-    @State private var isLoading: Bool = true
+    @State private var isLoading: Bool = false
+    @State private var isLoadingMore: Bool = false
+    @State private var isRefreshing: Bool = false
+    @State private var isEnd: Bool = false
 
     public init() {}
 
@@ -70,9 +73,21 @@ public struct EntryListView: View {
                                 .buttonStyle(PlainButtonStyle())
                             }
                         }
+                        if !isEnd {
+                            HStack {
+                                Spacer()
+                                ProgressView()
+                                Spacer()
+                            }
+                            .onAppear {
+                                Task {
+                                    await loadMoreEntries()
+                                }
+                            }
+                        }
                     }
                     .refreshable {
-                        await fetchEntries()
+                        await refreshEntries()
                     }
                 }
             }
@@ -82,23 +97,73 @@ public struct EntryListView: View {
         .font(.custom("SNProVF-Regular", size: 16))
         .onAppear {
             Task {
-                await fetchEntries()
+                await loadEntries()
             }
         }
     }
-
-    private func fetchEntries() async {
+    
+    private func loadEntries() async {
+        guard !isLoading else { return }
+        
+        isLoading = true
         let service = EntriesService()
-
+        
         do {
             let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
             entries = result.data ?? []
+            isEnd = result.remaining == 0
             withAnimation {
                 isLoading = false
             }
         } catch {
             withAnimation {
                 isLoading = false
+            }
+            print("Error: \(error)")
+        }
+    }
+    
+    private func refreshEntries() async {
+        guard !isRefreshing else { return }
+        
+        self.isRefreshing = true
+        let service = EntriesService()
+        
+        do {
+            let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
+            entries = result.data ?? []
+            isEnd = result.remaining == 0
+            withAnimation {
+                isRefreshing = false
+            }
+        } catch {
+            withAnimation {
+                isRefreshing = false
+            }
+            print("Error: \(error)")
+        }
+    }
+    
+    private func loadMoreEntries() async {
+        guard !isLoadingMore, !isLoading, !isEnd, !entries.isEmpty else { return }
+        
+        isLoadingMore = true
+        let service = EntriesService()
+        
+        do {
+            let result = try await service.postEntries(
+                feedId: feeds?.id,
+                listId: lists?.id,
+                publishedAfter: entries.last?.entries.publishedAt
+            )
+            entries.append(contentsOf: result.data ?? [])
+            isEnd = result.remaining == 0
+            withAnimation {
+                isLoadingMore = false
+            }
+        } catch {
+            withAnimation {
+                isLoadingMore = false
             }
             print("Error: \(error)")
         }
