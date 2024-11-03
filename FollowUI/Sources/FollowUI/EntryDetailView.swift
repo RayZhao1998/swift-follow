@@ -10,12 +10,13 @@ import MarkdownUI
 import SwiftUI
 
 struct EntryDetailView: View {
-    var entryId: String
+    var entry: PostEntries.EntryData
+    var onRead: () -> Void
 
-    @State private var entry: GetEntries.EntriesData?
+    @State private var entryDetail: GetEntries.EntriesData?
 
     var parsedContent: String {
-        guard let content = entry?.entries.content else {
+        guard let content = entryDetail?.entries.content else {
             return ""
         }
 
@@ -28,23 +29,25 @@ struct EntryDetailView: View {
                 .markdownTheme(.docC)
                 .padding()
         }
-        .navigationTitle(entry?.entries.title ?? "")
+        .navigationTitle(entry.entries.title ?? "")
         .toolbarVisibility(.hidden, for: .tabBar)
         .onAppear {
             let service = EntriesService()
 
             Task {
                 do {
-                    let result = try await service.getEntry(id: entryId)
-                    self.entry = result.data
+                    let result = try await service.getEntry(id: entry.entries.id)
+                    self.entryDetail = result.data
+
+                    if !(entry.read ?? false) {
+                        let readsService = ReadsService()
+                        let _ = try await readsService.postReads(entryIds: [entry.id])
+                        onRead()
+                    }
                 } catch {
                     print("Error: \(error)")
                 }
             }
         }
     }
-}
-
-#Preview {
-    EntryDetailView(entryId: "69312689103010816")
 }

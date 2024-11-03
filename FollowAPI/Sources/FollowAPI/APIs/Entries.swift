@@ -10,6 +10,28 @@ import Foundation
 
 // MARK: - Request Model
 
+func getUrlIcon(url: String, fallback: Bool? = nil) -> (src: String, fallbackUrl: String) {
+    var src = ""
+    var fallbackUrl = ""
+
+    if let urlObj = URL(string: url) {
+        let host = urlObj.host ?? ""
+        // 注意: 这里需要实现类似 parse 的域名解析功能
+        let pureDomain = getPureDomain(from: host)
+        fallbackUrl = "https://avatar.vercel.sh/\(pureDomain).svg?text=\(pureDomain.prefix(2).uppercased())"
+        src = "https://unavatar.webp.se/\(host)?fallback=\(fallback ?? false)"
+    } else {
+        let pureDomain = getPureDomain(from: url)
+        src = "https://avatar.vercel.sh/\(pureDomain).svg?text=\(pureDomain.prefix(2).uppercased())"
+    }
+
+    return (src: src, fallbackUrl: fallbackUrl)
+}
+
+func getPureDomain(from host: String) -> String {
+    return host.components(separatedBy: ".")[0]
+}
+
 public struct PostEntriesRequest: Encodable, Sendable {
     public let view: Int?
     public let feedId: String?
@@ -39,7 +61,7 @@ public enum PostEntries {
     public struct EntryData: Decodable, Sendable, Identifiable {
         public let entries: Entry
         public let feeds: Feed
-        public let read: Bool?
+        public var read: Bool?
         public let collections: Collections?
         public let settings: Settings?
 
@@ -78,6 +100,16 @@ public enum PostEntries {
         public let ownerUserId: String?
         public let owner: User?
         public let tipUsers: [User]?
+
+        public var imageUrl: String? {
+            if let image {
+                return image
+            }
+            if let siteUrl {
+                return getUrlIcon(url: siteUrl).src
+            }
+            return nil
+        }
     }
 
     public struct User: Decodable, Sendable {
@@ -226,15 +258,16 @@ public enum GetEntries {
 public actor EntriesService {
     public init() {}
 
-    public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool = false, publishedAfter: String? = nil) async throws -> PostEntries.Response {
+    public func postEntries(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool = false, read: Bool = false, publishedAfter: String? = nil) async throws -> PostEntries.Response {
         let url = NetworkManager.baseURL.appendingPathComponent("entries")
-        
+
         var parameters: [String: Sendable] = [:]
         parameters["csrfToken"] = NetworkManager.shared.csrfToken ?? ""
         if let feedId = feedId { parameters["feedId"] = feedId }
         if let listId = listId { parameters["listId"] = listId }
         if let view = view { parameters["view"] = view }
         parameters["isArchived"] = isArchived
+        parameters["read"] = read
         if let publishedAfter = publishedAfter { parameters["publishedAfter"] = publishedAfter }
 
         return try await NetworkManager.shared.request(url,

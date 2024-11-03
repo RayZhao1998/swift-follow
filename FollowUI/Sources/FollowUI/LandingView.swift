@@ -65,8 +65,6 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
                     NetworkManager.shared.setSessionToken(token)
                     self.setSessionToken(token)
                     let session = try await authService.getSession(authToken: token)
-                    let csrfToken = try await authService.getCsrfToken().csrfToken
-                    NetworkManager.shared.setCSRToken(csrfToken)
                     await MainActor.run {
                         self.isAuthenticated = true
                     }
@@ -119,8 +117,6 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
                     String.self, from: sessionTokenData
                 )
                 NetworkManager.shared.setSessionToken(sessionToken)
-                let csrfToken = try await authService.getCsrfToken().csrfToken
-                NetworkManager.shared.setCSRToken(csrfToken)
                 isAuthenticated = true
             } catch {
                 isAuthenticated = false

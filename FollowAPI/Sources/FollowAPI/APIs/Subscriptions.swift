@@ -115,6 +115,16 @@ public enum Subscriptions {
         public let ownerUserId: String?
         public let owner: User?
         public let tipUsers: [User]?
+        
+        public var imageUrl: String? {
+            if let image {
+                return image
+            }
+            if let siteUrl {
+                return getUrlIcon(url: siteUrl).src
+            }
+            return nil
+        }
     }
 
     public struct List: Codable, Sendable {
@@ -130,6 +140,13 @@ public enum Subscriptions {
         public let feeds: [Feed]?
         public let ownerUserId: String?
         public let owner: User?
+        
+        public var imageUrl: String? {
+            if let image {
+                return image
+            }
+            return nil
+        }
     }
 
     public struct Inbox: Codable, Sendable {

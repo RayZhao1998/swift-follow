@@ -145,7 +145,7 @@ public struct SubscriptionListView: View {
                                         EntryListView(lists: subscription.lists)
                                     } label: {
                                         HStack {
-                                            if let image = subscription.lists.image,
+                                            if let image = subscription.lists.imageUrl,
                                                let imageUrl = URL(string: image)
                                             {
                                                 KFImage.url(imageUrl)
@@ -205,7 +205,7 @@ public struct SubscriptionListView: View {
                                         EntryListView(feeds: subscription.feeds)
                                     } label: {
                                         HStack {
-                                            if let image = subscription.feeds.image,
+                                            if let image = subscription.feeds.imageUrl,
                                                let imageUrl = URL(string: image)
                                             {
                                                 KFImage.url(imageUrl)

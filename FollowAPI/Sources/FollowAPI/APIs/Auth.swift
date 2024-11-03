@@ -31,10 +31,6 @@ public enum Auth {
             public let toUserId: String
         }
     }
-
-    public struct CSRFTokenResponse: Codable, Sendable {
-        public let csrfToken: String
-    }
 }
 
 public actor AuthService {
@@ -42,16 +38,6 @@ public actor AuthService {
 
     public func getSession(authToken: String) async throws -> Auth.SessionResponse {
         let urlComponents = URLComponents(url: NetworkManager.baseURL.appendingPathComponent("auth/session"), resolvingAgainstBaseURL: false)
-
-        guard let url = urlComponents?.url else {
-            throw URLError(.badURL)
-        }
-        
-        return try await NetworkManager.shared.request(url)
-    }
-    
-    public func getCsrfToken() async throws -> Auth.CSRFTokenResponse {
-        let urlComponents = URLComponents(url: NetworkManager.baseURL.appendingPathComponent("auth/csrf"), resolvingAgainstBaseURL: false)
 
         guard let url = urlComponents?.url else {
             throw URLError(.badURL)
