@@ -105,18 +105,37 @@ struct ProfileView: View {
                     .background(Color(uiColor: .systemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     VStack(alignment: .leading, spacing: 0) {
-                        Label("Profile", image: "person")
-                            .font(.custom("SNProVF-Medium", size: 16))
-                            .padding()
+                        HStack {
+                            Image("person")
+                                .resizable()
+                                .renderingMode(.template)
+                                .frame(width: 16, height: 16)
+                            Text("Profile")
+                                .font(.custom("SNProVF-Medium", size: 16))
+                        }
+                        .padding()
                         Divider()
-                        Label("Achievements", image: "trophy")
-                            .font(.custom("SNProVF-Medium", size: 16))
-                            .padding()
+                        HStack {
+                            Image("trophy")
+                                .resizable()
+                                .renderingMode(.template)
+                                .frame(width: 16, height: 16)
+                            Text("Achievements")
+                                .font(.custom("SNProVF-Medium", size: 16))
+                        }
+                        .padding()
                         Divider()
-                        Label("Preferences", image: "gear")
-                            .font(.custom("SNProVF-Medium", size: 16))
-                            .padding()
+                        HStack {
+                            Image("gear")
+                                .resizable()
+                                .renderingMode(.template)
+                                .frame(width: 16, height: 16)
+                            Text("Preferences")
+                                .font(.custom("SNProVF-Medium", size: 16))
+                        }
+                        .padding()
                     }
+                    .foregroundStyle(Color(uiColor: .label))
                     .background(Color(uiColor: .systemGroupedBackground))
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     Button(action: {
