@@ -16,7 +16,7 @@ struct SessionDataKey: EnvironmentKey {
 }
 
 extension EnvironmentValues {
-    var sessionData: Auth.SessionResponse?  {
+    var sessionData: Auth.SessionResponse? {
         get { self[SessionDataKey.self] }
         set { self[SessionDataKey.self] = newValue }
     }
@@ -61,23 +61,13 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
         if let token = queryItems.first(where: { $0.name == "token" })?.value {
             Task {
-                do {
-                    NetworkManager.shared.setSessionToken(token)
-                    self.setSessionToken(token)
-                    let session = try await authService.getSession(authToken: token)
-                    await MainActor.run {
-                        self.isAuthenticated = true
-                    }
-                    self.saveSessionData(sessionData: session)
-                } catch {
-                    print("认证会话失败: \(error.localizedDescription)")
-                    // 可以在这里添加错误处理逻辑
-                }
+                await self.setSessionToken(token)
             }
         }
     }
 
-    private func setSessionToken(_ token: String) {
+    public func setSessionToken(_ token: String) async {
+        NetworkManager.shared.setSessionToken(token)
         do {
             let data = try JSONEncoder().encode(token)
             if KeychainWrapper.save(data, forKey: "sessionToken") {
@@ -87,6 +77,15 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
             }
         } catch {
             print("Error encoding session data: \(error)")
+        }
+        do {
+            let session = try await authService.getSession(authToken: token)
+            await MainActor.run {
+                self.isAuthenticated = true
+            }
+            saveSessionData(sessionData: session)
+        } catch {
+            print("认证会话失败: \(error.localizedDescription)")
         }
     }
 
@@ -164,6 +163,8 @@ struct LandingView: View {
     @State private var buttonsOpacity: CGFloat = 0
     @State private var animateGradient: Bool = false
 
+    @State private var showDemoModeLoginView: Bool = false
+
     var body: some View {
         Group {
             if showMainView {
@@ -229,6 +230,15 @@ struct LandingView: View {
                         .opacity(buttonsOpacity)
                 } else {
                     VStack(spacing: 10) {
+                        Button {
+                            self.showDemoModeLoginView.toggle()
+                        } label: {
+                            Text("No account? Demo mode >")
+                        }
+                        .sheet(isPresented: $showDemoModeLoginView) {
+                            DemoModeLoginView()
+                                .environmentObject(authHandler)
+                        }
                         Button(action: {
                             authHandler.startAuthentication()
                         }) {
