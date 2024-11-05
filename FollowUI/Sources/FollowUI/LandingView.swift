@@ -36,8 +36,8 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
         }
     }
 
-    func startAuthentication() {
-        guard let url = URL(string: "https://app.follow.is/login?provider=github") else { return }
+    func startAuthentication(_ type: String) {
+        guard let url = URL(string: "https://app.follow.is/login?provider=\(type)") else { return }
 
         webAuthSession = ASWebAuthenticationSession(url: url, callbackURLScheme: "follow") {
             callbackURL, error in
@@ -240,7 +240,7 @@ struct LandingView: View {
                                 .environmentObject(authHandler)
                         }
                         Button(action: {
-                            authHandler.startAuthentication()
+                            authHandler.startAuthentication("github")
                         }) {
                             HStack {
                                 Spacer()
@@ -256,9 +256,7 @@ struct LandingView: View {
                             .cornerRadius(8)
                         }
                         Button(action: {
-                            Task {
-                                // TODO: Sign in with Google
-                            }
+                            authHandler.startAuthentication("google")
                         }) {
                             HStack {
                                 Spacer()
