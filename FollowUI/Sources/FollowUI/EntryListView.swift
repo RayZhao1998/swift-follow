@@ -6,7 +6,6 @@
 //
 
 import FollowAPI
-import Kingfisher
 import SwiftUI
 
 public struct EntryListView: View {
@@ -51,59 +50,12 @@ public struct EntryListView: View {
                 } else {
                     List {
                         ForEach(entries) { entry in
-                            NavigationLink(destination: EntryDetailView(entry: entry) {
-                                if let index = entries.firstIndex(where: { $0.id == entry.id }) {
-                                    entries[index].read = true
-                                }
-                            }) {
-                                HStack(alignment: .top) {
-                                    HStack(alignment: .center) {
-                                        if !(entry.read ?? false) {
-                                            Circle()
-                                                .frame(width: 8, height: 8)
-                                                .foregroundStyle(Color(red: 255 / 255, green: 92 / 255, blue: 0 / 255))
-                                        }
-                                        if let image = entry.feeds.imageUrl,
-                                           let imageUrl = URL(string: image)
-                                        {
-                                            KFImage.url(imageUrl)
-                                                .resizable()
-                                                .roundCorner(
-                                                    radius: .widthFraction(0.2),
-                                                    roundingCorners: .all
-                                                )
-                                                .loadDiskFileSynchronously()
-                                                .cacheMemoryOnly()
-                                                .frame(width: 20, height: 20)
-                                        }
-                                    }
-                                    VStack(alignment: .leading, spacing: 2) {
-                                        Text("\(entry.feeds.title ?? "")·\(DateFormatting.shared.formatTime(dateString: entry.entries.publishedAt))")
-                                            .font(.custom("SNProVF-Bold", size: 10))
-                                            .foregroundStyle(Color(uiColor: .secondaryLabel))
-                                            .lineSpacing(2)
-                                        Text(entry.entries.title ?? "")
-                                            .font(.custom("SNProVF-Medium", size: 14))
-                                            .foregroundStyle(Color(uiColor: !(entry.read ?? false) ? .label : .secondaryLabel))
-                                            .lineLimit(1)
-                                        Text(entry.entries.description ?? "")
-                                            .font(.custom("SNProVF", size: 13))
-                                            .foregroundStyle(Color(uiColor: .secondaryLabel))
-                                            .lineSpacing(2)
-                                            .lineLimit(3)
-                                    }
-                                    Spacer()
-                                    if let image = entry.entries.media?.first?.url.replaceImgUrlIfNeed(), let imageUrl = URL(string: image) {
-                                        KFImage.url(imageUrl)
-                                            .resizable()
-                                            .serialize(as: .PNG)
-                                            .loadDiskFileSynchronously()
-                                            .cacheMemoryOnly()
-                                            .frame(width: 80, height: 80)
-                                            .clipShape(RoundedRectangle(cornerRadius: 8))
+                            EntryListItemView(entry: entry) {
+                                EntryDetailView(entry: entry) {
+                                    if let index = entries.firstIndex(where: { $0.id == entry.id }) {
+                                        entries[index].read = true
                                     }
                                 }
-                                .buttonStyle(PlainButtonStyle())
                             }
                         }
                         if !isEnd {
@@ -119,6 +71,7 @@ public struct EntryListView: View {
                             }
                         }
                     }
+                    .listStyle(PlainListStyle())
                     .refreshable {
                         await refreshEntries()
                     }
