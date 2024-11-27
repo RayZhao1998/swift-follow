@@ -106,9 +106,11 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
 
     private func loadSessionData() async {
         if let sessionData = KeychainWrapper.load(forKey: "sessionData") {
-            self.sessionData = try? JSONDecoder().decode(
-                Auth.SessionResponse.self, from: sessionData
-            )
+            await MainActor.run {
+                self.sessionData = try? JSONDecoder().decode(
+                    Auth.SessionResponse.self, from: sessionData
+                )
+            }
         }
         if let sessionTokenData = KeychainWrapper.load(forKey: "sessionToken") {
             do {
@@ -116,9 +118,13 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
                     String.self, from: sessionTokenData
                 )
                 NetworkManager.shared.setSessionToken(sessionToken)
-                isAuthenticated = true
+                await MainActor.run {
+                    isAuthenticated = true
+                }
             } catch {
-                isAuthenticated = false
+                await MainActor.run {
+                    isAuthenticated = false
+                }
             }
         } else {
             isAuthenticated = false
