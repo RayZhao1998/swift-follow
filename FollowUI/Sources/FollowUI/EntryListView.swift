@@ -31,6 +31,15 @@ public struct EntryListView: View {
     }
 
     public var body: some View {
+        if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {
+            navigationStack
+                .toolbarVisibility(feeds == nil && lists == nil ? .visible : .hidden, for: .tabBar)
+        } else {
+            navigationStack
+        }
+    }
+    
+    private var navigationStack: some View {
         NavigationStack {
             ZStack {
                 if isLoading {
@@ -117,7 +126,6 @@ public struct EntryListView: View {
             }
             .navigationTitle(feeds?.title ?? lists?.title ?? "Reader")
         }
-        .toolbarVisibility(feeds == nil && lists == nil ? .visible : .hidden, for: .tabBar)
         .font(.custom("SNProVF-Regular", size: 16))
         .onAppear {
             Task {

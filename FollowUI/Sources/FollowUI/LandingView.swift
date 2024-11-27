@@ -175,7 +175,7 @@ struct LandingView: View {
                 contentView
             }
         }
-        .onChange(of: authHandler.isAuthenticated) { newValue in
+        .onChange(of: authHandler.isAuthenticated, initial: true) { _, newValue in
             if let newValue {
                 DispatchQueue.main.async {
                     self.showMainView = newValue

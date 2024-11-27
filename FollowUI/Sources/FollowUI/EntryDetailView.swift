@@ -22,15 +22,23 @@ struct EntryDetailView: View {
 
         return (try? HTMLToMarkdownParser().parseHTML(content: content)) ?? ""
     }
-
+    
     var body: some View {
+        if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {
+            scrollView
+                .toolbarVisibility(.hidden, for: .tabBar)
+        } else {
+            scrollView
+        }
+    }
+    
+    private var scrollView: some View {
         ScrollView {
             Markdown(parsedContent)
                 .markdownTheme(.docC)
                 .padding()
         }
         .navigationTitle(entry.entries.title ?? "")
-        .toolbarVisibility(.hidden, for: .tabBar)
         .onAppear {
             let service = EntriesService()
 
