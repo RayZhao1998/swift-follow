@@ -13,6 +13,7 @@ struct EntryDetailView: View {
     var entry: PostEntries.EntryData
     var onRead: () -> Void
 
+    @Environment(\.openURL) var openURL
     @State private var entryDetail: GetEntries.EntriesData?
 
     var parsedContent: String {
@@ -31,6 +32,13 @@ struct EntryDetailView: View {
         }
         .navigationTitle(entry.entries.title ?? "")
         .toolbarVisibility(.hidden, for: .tabBar)
+        .toolbar(content: {
+            if let urlString = entry.entries.url, let url = URL(string: urlString) {
+                Button("Open in Safari", systemImage: "safari") {
+                    openURL(url)
+                }
+            }
+        })
         .onAppear {
             let service = EntriesService()
 
