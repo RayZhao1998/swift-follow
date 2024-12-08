@@ -37,14 +37,12 @@ public struct PostEntriesRequest: Encodable, Sendable {
     public let feedId: String?
     public let listId: String?
     public let isArchived: Bool?
-    public let csrfToken: String
 
     public init(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool? = nil) {
         self.feedId = feedId
         self.listId = listId
         self.view = view
         self.isArchived = isArchived
-        self.csrfToken = NetworkManager.shared.csrfToken ?? ""
     }
 }
 
@@ -262,7 +260,6 @@ public actor EntriesService {
         let url = NetworkManager.baseURL.appendingPathComponent("entries")
 
         var parameters: [String: Sendable] = [:]
-        parameters["csrfToken"] = NetworkManager.shared.csrfToken ?? ""
         if let feedId = feedId { parameters["feedId"] = feedId }
         if let listId = listId { parameters["listId"] = listId }
         if let view = view { parameters["view"] = view }

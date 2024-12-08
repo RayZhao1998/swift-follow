@@ -18,7 +18,7 @@ struct DemoModeLoginView: View {
             Button {
                 dismiss()
                 Task {
-                    await authHandler.setSessionToken(sessionToken)
+                    await authHandler.setBetterAuthSessionToken(sessionToken)
                 }
             } label: {
                 Text("Login")
