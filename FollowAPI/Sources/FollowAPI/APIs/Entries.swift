@@ -115,7 +115,7 @@ public enum PostEntries {
     public struct User: Decodable, Sendable {
         public let name: String?
         public let id: String
-        public let emailVerified: String?
+        public let emailVerified: Bool?
         public let image: String?
         public let handle: String?
         public let createdAt: String
@@ -246,7 +246,7 @@ public enum GetEntries {
     public struct User: Decodable, Sendable {
         public let name: String?
         public let id: String
-        public let emailVerified: String?
+        public let emailVerified: Bool?
         public let image: String?
         public let handle: String?
         public let createdAt: String

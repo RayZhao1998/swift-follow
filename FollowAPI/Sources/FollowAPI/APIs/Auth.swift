@@ -18,7 +18,7 @@ public enum Auth {
             public let id: String
             public let name: String
             public let email: String
-            public let emailVerified: String?
+            public let emailVerified: Bool?
             public let image: String?
             public let handle: String?
             public let createdAt: String
