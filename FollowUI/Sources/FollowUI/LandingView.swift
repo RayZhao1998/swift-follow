@@ -235,6 +235,7 @@ struct LandingView: View {
                         } label: {
                             Text("No account? Demo mode >")
                         }
+                        .buttonStyle(.plain)
                         .sheet(isPresented: $showDemoModeLoginView) {
                             DemoModeLoginView()
                                 .environmentObject(authHandler)
@@ -255,6 +256,7 @@ struct LandingView: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                         }
+                        .buttonStyle(.plain)
                         Button(action: {
                             authHandler.startAuthentication("google")
                         }) {
@@ -271,6 +273,7 @@ struct LandingView: View {
                             .foregroundColor(.white)
                             .cornerRadius(8)
                         }
+                        .buttonStyle(.plain)
                     }
                     .offset(y: buttonsOffset)
                     .opacity(buttonsOpacity)
