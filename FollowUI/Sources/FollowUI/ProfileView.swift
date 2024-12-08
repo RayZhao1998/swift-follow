@@ -102,7 +102,7 @@ struct ProfileView: View {
                         }
                     }
                     .padding()
-                    .background(Color(uiColor: .systemGroupedBackground))
+                    .background(Color.systemGroupedBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     VStack(alignment: .leading, spacing: 0) {
                         HStack {
@@ -135,8 +135,8 @@ struct ProfileView: View {
                         }
                         .padding()
                     }
-                    .foregroundStyle(Color(uiColor: .label))
-                    .background(Color(uiColor: .systemGroupedBackground))
+                    .foregroundStyle(Color.label)
+                    .background(Color.systemGroupedBackground)
                     .clipShape(RoundedRectangle(cornerRadius: 8))
                     Button(action: {
                         authHandler.logout()
@@ -156,6 +156,7 @@ struct ProfileView: View {
                         .background(Color(red: 59 / 255, green: 130 / 255, blue: 246 / 255))
                         .cornerRadius(8)
                     }
+                    .buttonStyle(.plain)
                 }
                 .padding()
             }

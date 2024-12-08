@@ -32,7 +32,9 @@ public struct EntryListView: View {
     public var body: some View {
         if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {
             navigationStack
+#if os(iOS)
                 .toolbarVisibility(feeds == nil && lists == nil ? .visible : .hidden, for: .tabBar)
+#endif
         } else {
             navigationStack
         }
