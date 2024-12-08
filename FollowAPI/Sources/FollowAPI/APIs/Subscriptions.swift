@@ -20,18 +20,18 @@ public enum Subscriptions {
         case list(ListSubscription)
         case inbox(InboxSubscription)
         
-        public var id: String {
+        public var id: String? {
             switch self {
             case .feed(let feedSubscription):
                 return "\(feedSubscription.feedId)"
             case .list(let listSubscription):
-                return "\(listSubscription.listId)"
+                return listSubscription.listId == nil ? nil : "\(listSubscription.listId!)"
             case .inbox(let inboxSubscription):
                 return "\(inboxSubscription.inboxId)"
             }
         }
         
-        public var view: Int {
+        public var view: Int? {
             switch self {
             case .feed(let feedSubscription):
                 return feedSubscription.view
@@ -81,12 +81,12 @@ public enum Subscriptions {
 
     public struct ListSubscription: Codable, Sendable {
         public let title: String?
-        public let userId: String
-        public let view: Int
-        public let feedId: String
-        public let lists: List
-        public let isPrivate: Bool
-        public let listId: String
+        public let userId: String?
+        public let view: Int?
+        public let feedId: String?
+        public let lists: List?
+        public let isPrivate: Bool?
+        public let listId: String?
         public let lastViewedAt: String?
         public let category: String?
     }
@@ -128,16 +128,15 @@ public enum Subscriptions {
     }
 
     public struct List: Codable, Sendable {
-        public let type: String
-        public let id: String
-        public let view: Int
-        public let feedIds: [String]
-        public let fee: Int
-        public let timelineUpdatedAt: String
+        public let type: String?
+        public let id: String?
+        public let view: Int?
+        public let feedIds: [String]?
+        public let fee: Int?
+        public let timelineUpdatedAt: String?
         public let description: String?
         public let title: String?
         public let image: String?
-        public let feeds: [Feed]?
         public let ownerUserId: String?
         public let owner: User?
         
@@ -162,11 +161,11 @@ public enum Subscriptions {
 
     public struct User: Codable, Sendable {
         public let name: String?
-        public let id: String
-        public let emailVerified: String?
+        public let id: String?
+        public let emailVerified: Bool?
         public let image: String?
         public let handle: String?
-        public let createdAt: String
+        public let createdAt: String?
     }
 }
 

@@ -22,6 +22,8 @@ extension EnvironmentValues {
     }
 }
 
+fileprivate let BetterAuthSessionTokenKeychainKey = "betterAuthSessionToken"
+
 class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
     @Published var isAuthenticated: Bool? = false
     @Published var sessionData: Auth.SessionResponse?
@@ -59,18 +61,18 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
               let queryItems = components.queryItems
         else { return }
 
-        if let token = queryItems.first(where: { $0.name == "token" })?.value {
+        if let ck = queryItems.first(where: { $0.name == "ck" })?.value {
             Task {
-                await self.setSessionToken(token)
+                await self.setBetterAuthSessionToken(ck)
             }
         }
     }
 
-    public func setSessionToken(_ token: String) async {
-        NetworkManager.shared.setSessionToken(token)
+    public func setBetterAuthSessionToken(_ ck: String) async {
+        NetworkManager.shared.setBetterAuthSessionToken(ck)
         do {
-            let data = try JSONEncoder().encode(token)
-            if KeychainWrapper.save(data, forKey: "sessionToken") {
+            let data = try JSONEncoder().encode(ck)
+            if KeychainWrapper.save(data, forKey: BetterAuthSessionTokenKeychainKey) {
                 print("Session token saved successfully")
             } else {
                 print("Failed to save session token")
@@ -79,11 +81,11 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
             print("Error encoding session data: \(error)")
         }
         do {
-            let session = try await authService.getSession(authToken: token)
+//            let session = try await authService.getSession(authToken: )
             await MainActor.run {
                 self.isAuthenticated = true
             }
-            saveSessionData(sessionData: session)
+//            saveSessionData(sessionData: session)
         } catch {
             print("认证会话失败: \(error.localizedDescription)")
         }
@@ -110,25 +112,27 @@ class AuthenticationHandler: NSObject, ObservableObject, @unchecked Sendable {
                 Auth.SessionResponse.self, from: sessionData
             )
         }
-        if let sessionTokenData = KeychainWrapper.load(forKey: "sessionToken") {
+        if let sessionTokenData = KeychainWrapper.load(forKey: BetterAuthSessionTokenKeychainKey) {
             do {
                 let sessionToken: String = try JSONDecoder().decode(
                     String.self, from: sessionTokenData
                 )
-                NetworkManager.shared.setSessionToken(sessionToken)
+                NetworkManager.shared.setBetterAuthSessionToken(sessionToken)
                 isAuthenticated = true
             } catch {
                 isAuthenticated = false
             }
         } else {
-            isAuthenticated = false
+            await MainActor.run {
+                isAuthenticated = false
+            }
         }
     }
 
     func logout() {
         isAuthenticated = false
         _ = KeychainWrapper.delete(forKey: "sessionData")
-        _ = KeychainWrapper.delete(forKey: "sessionToken")
+        _ = KeychainWrapper.delete(forKey: BetterAuthSessionTokenKeychainKey)
         NetworkManager.shared.clearTokens()
     }
 }

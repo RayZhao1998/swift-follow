@@ -37,14 +37,12 @@ public struct PostEntriesRequest: Encodable, Sendable {
     public let feedId: String?
     public let listId: String?
     public let isArchived: Bool?
-    public let csrfToken: String
 
     public init(feedId: String? = nil, listId: String? = nil, view: Int? = nil, isArchived: Bool? = nil) {
         self.feedId = feedId
         self.listId = listId
         self.view = view
         self.isArchived = isArchived
-        self.csrfToken = NetworkManager.shared.csrfToken ?? ""
     }
 }
 
@@ -53,9 +51,7 @@ public struct PostEntriesRequest: Encodable, Sendable {
 public enum PostEntries {
     public struct Response: Decodable, Sendable {
         public let code: Int
-        public let remaining: Int
         public let data: [EntryData]?
-        public let total: Int?
     }
 
     public struct EntryData: Decodable, Sendable, Identifiable {
@@ -115,7 +111,7 @@ public enum PostEntries {
     public struct User: Decodable, Sendable {
         public let name: String?
         public let id: String
-        public let emailVerified: String?
+        public let emailVerified: Bool?
         public let image: String?
         public let handle: String?
         public let createdAt: String
@@ -246,7 +242,7 @@ public enum GetEntries {
     public struct User: Decodable, Sendable {
         public let name: String?
         public let id: String
-        public let emailVerified: String?
+        public let emailVerified: Bool?
         public let image: String?
         public let handle: String?
         public let createdAt: String
@@ -262,7 +258,6 @@ public actor EntriesService {
         let url = NetworkManager.baseURL.appendingPathComponent("entries")
 
         var parameters: [String: Sendable] = [:]
-        parameters["csrfToken"] = NetworkManager.shared.csrfToken ?? ""
         if let feedId = feedId { parameters["feedId"] = feedId }
         if let listId = listId { parameters["listId"] = listId }
         if let view = view { parameters["view"] = view }

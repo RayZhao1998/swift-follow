@@ -25,7 +25,7 @@ public struct EntryListView: View {
         self.feeds = feeds
     }
 
-    public init(lists: Subscriptions.List) {
+    public init(lists: Subscriptions.List?) {
         self.lists = lists
     }
 
@@ -96,7 +96,7 @@ public struct EntryListView: View {
         do {
             let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
             entries = result.data ?? []
-            isEnd = result.remaining == 0
+            isEnd = result.data?.isEmpty ?? true
             withAnimation {
                 isLoading = false
             }
@@ -117,7 +117,7 @@ public struct EntryListView: View {
         do {
             let result = try await service.postEntries(feedId: feeds?.id, listId: lists?.id)
             entries = result.data ?? []
-            isEnd = result.remaining == 0
+            isEnd = result.data?.isEmpty ?? true
             withAnimation {
                 isRefreshing = false
             }
@@ -142,7 +142,7 @@ public struct EntryListView: View {
                 publishedAfter: entries.last?.entries.publishedAt
             )
             entries.append(contentsOf: result.data ?? [])
-            isEnd = result.remaining == 0
+            isEnd = result.data?.isEmpty ?? true
             withAnimation {
                 isLoadingMore = false
             }
