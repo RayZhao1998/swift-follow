@@ -51,9 +51,7 @@ public struct PostEntriesRequest: Encodable, Sendable {
 public enum PostEntries {
     public struct Response: Decodable, Sendable {
         public let code: Int
-        public let remaining: Int
         public let data: [EntryData]?
-        public let total: Int?
     }
 
     public struct EntryData: Decodable, Sendable, Identifiable {

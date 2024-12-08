@@ -85,7 +85,11 @@ public struct SubscriptionListView: View {
 
     private func unreadCount(_ view: Int) -> Int {
         subscriptions[view]?.reduce(0) { result, subscription in
-            result + (reads[subscription.id] ?? 0)
+            if let id = subscription.id {
+                return result + (reads[id] ?? 0)
+            } else {
+                return result
+            }
         } ?? 0
     }
 
@@ -145,7 +149,7 @@ public struct SubscriptionListView: View {
                                         EntryListView(lists: subscription.lists)
                                     } label: {
                                         HStack {
-                                            if let image = subscription.lists.imageUrl,
+                                            if let image = subscription.lists?.imageUrl,
                                                let imageUrl = URL(string: image)
                                             {
                                                 KFImage.url(imageUrl)
@@ -157,10 +161,10 @@ public struct SubscriptionListView: View {
                                                     .cacheMemoryOnly()
                                                     .frame(width: 28, height: 28)
                                             }
-                                            Text(subscription.lists.title ?? "")
+                                            Text(subscription.lists?.title ?? "")
                                                 .lineLimit(1)
                                             Spacer()
-                                            if let count = reads[subscription.listId] {
+                                            if let listId = subscription.listId, let count = reads[listId] {
                                                 Text("\(count)")
                                                     .font(.custom("SNProVF-Regular", size: 10))
                                                     .foregroundStyle(.secondary)
@@ -272,7 +276,9 @@ public struct SubscriptionListView: View {
             if firstTime {
                 subscriptions = [:]
                 for subscription in result {
-                    subscriptions[subscription.view, default: []].append(subscription)
+                    if let view = subscription.view {
+                        subscriptions[view, default: []].append(subscription)
+                    }
                 }
             } else {
                 subscriptions[selectedView.view] = result
