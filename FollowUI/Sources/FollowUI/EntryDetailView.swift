@@ -27,7 +27,9 @@ struct EntryDetailView: View {
     var body: some View {
         if #available(iOS 18.0, macOS 15.0, visionOS 2.0, *) {
             scrollView
+#if os(iOS)
                 .toolbarVisibility(.hidden, for: .tabBar)
+#endif
         } else {
             scrollView
         }

@@ -13,5 +13,6 @@ struct swift_followApp: App {
         WindowGroup {
             LandingView()
         }
+        .windowStyle(.hiddenTitleBar)
     }
 }
