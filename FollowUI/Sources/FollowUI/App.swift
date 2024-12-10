@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import FollowAPI
 
 @main
 struct swift_followApp: App {
+    let persistenceController = PersistenceController.shared
+    
     var body: some Scene {
         WindowGroup {
             LandingView()
+                .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
 }
