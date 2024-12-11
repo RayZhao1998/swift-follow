@@ -12,12 +12,12 @@ let package = Package(
             name: "FollowAPI",
             targets: ["FollowAPI"]),
     ],
-    dependencies: [.package(url: "https://github.com/Alamofire/Alamofire", exact: "5.10.0")],
+    dependencies: [.package(url: "https://github.com/Alamofire/Alamofire", exact: "5.10.0"), .package(url: "https://github.com/pointfreeco/swift-composable-architecture", exact: "1.17.0")],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "FollowAPI", dependencies: [.product(name: "Alamofire", package: "Alamofire")]),
+            name: "FollowAPI", dependencies: [.product(name: "Alamofire", package: "Alamofire"), .product(name: "ComposableArchitecture", package: "swift-composable-architecture")]),
         .testTarget(
             name: "FollowAPITests",
             dependencies: ["FollowAPI"]

@@ -34,6 +34,7 @@
 		D798EA262CBD6CDE00BA067C /* swift-followUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "swift-followUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		D798EA392CBD730600BA067C /* FollowAPI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FollowAPI; sourceTree = "<group>"; };
 		D798EA3D2CBD7BB100BA067C /* FollowUI */ = {isa = PBXFileReference; lastKnownFileType = wrapper; path = FollowUI; sourceTree = "<group>"; };
+		D7EE99572D09DDDF004F5A96 /* ci_post_clone.sh */ = {isa = PBXFileReference; lastKnownFileType = text.script.sh; path = ci_post_clone.sh; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -97,6 +98,7 @@
 		D798EA022CBD6CDC00BA067C = {
 			isa = PBXGroup;
 			children = (
+				D7EE99562D09DDC9004F5A96 /* ci_scripts */,
 				D798EA3D2CBD7BB100BA067C /* FollowUI */,
 				D798EA392CBD730600BA067C /* FollowAPI */,
 				D798EA0D2CBD6CDC00BA067C /* swift-follow */,
@@ -122,6 +124,14 @@
 			children = (
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		D7EE99562D09DDC9004F5A96 /* ci_scripts */ = {
+			isa = PBXGroup;
+			children = (
+				D7EE99572D09DDDF004F5A96 /* ci_post_clone.sh */,
+			);
+			path = ci_scripts;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
